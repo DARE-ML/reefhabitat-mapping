@@ -34,7 +34,7 @@ for b in range(img.shape[2]):
     img[:,:,b]=img_ds.GetRasterBand(b + 1).ReadAsArray()
 #reshaping array:
 new_shape = (img.shape[0] * img.shape[1], img.shape[2])
-X= img[:,:,:13].reshape(new_shape)
+X= img[:,:,:4].reshape(new_shape)
 
 #k-nn Clusterinng
 k_means = cluster.KMeans(n_clusters=7)
