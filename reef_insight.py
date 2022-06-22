@@ -5,7 +5,7 @@ Created on Wed Jun 22 11:15:57 2022
 @author: Saharsh
 """
 
-!pip install rasterio
+# !pip install rasterio
 
 import numpy as np
 import cv2
@@ -20,9 +20,8 @@ from sklearn.mixture import GaussianMixture as GMM
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.cluster import DBSCAN
 
-
-mosaic_path = '/content/drive/MyDrive/unsw_remote_sensing/coral_atlas/mosaic.tif'
-bathymetry_path = '/content/drive/MyDrive/unsw_remote_sensing/coral_atlas/bathymetry.tif'
+mosaic_path = 'C:/Users/Saharsh/Desktop/UNSW/Code/coral_atlas/mosaic.tif'
+bathymetry_path ='C:/Users/Saharsh/Desktop/UNSW/Code/coral_atlas/bathymetry.tif'
 
 """###Section 0: Utility functions"""
 
@@ -119,131 +118,135 @@ def dbscan_mosaic(mosaic, epsilon, min_samples):
   clustering_labels = dbscan_model.labels_
   return clustering_labels
 
-"""###Section 2: Loading the remote sensing data"""
+def main():
+	"""###Section 2: Loading the remote sensing data"""
 
-# Loading the reef-mosaic as RGB 
+	# Loading the reef-mosaic as RGB 
 
-reef_mosaic_benthic = cv2.imread(mosaic_path)
-reef_mosaic_benthic = cv2.cvtColor(reef_mosaic_benthic, cv2.COLOR_BGR2RGB)
-plt.imshow(reef_mosaic_benthic)
+	reef_mosaic_benthic = cv2.imread(mosaic_path)
+	reef_mosaic_benthic = cv2.cvtColor(reef_mosaic_benthic, cv2.COLOR_BGR2RGB)
+	plt.imshow(reef_mosaic_benthic)
 
-# Loading the bathymetry data
+	# Loading the bathymetry data
 
-bathymetry_raster = rasterio.open(bathymetry_path)
-bathymetry_raster_visual= bathymetry_raster.read([1])
-show(bathymetry_raster_visual)
-bathymetry_raster = bathymetry_raster_visual.reshape(bathymetry_raster_visual.shape[1],bathymetry_raster_visual.shape[2],bathymetry_raster_visual.shape[0])
-bathymetry_raster = np.uint16(bathymetry_raster)
+	bathymetry_raster = rasterio.open(bathymetry_path)
+	bathymetry_raster_visual= bathymetry_raster.read([1])
+	show(bathymetry_raster_visual)
+	bathymetry_raster = bathymetry_raster_visual.reshape(bathymetry_raster_visual.shape[1],bathymetry_raster_visual.shape[2],bathymetry_raster_visual.shape[0])
+	bathymetry_raster = np.uint16(bathymetry_raster)
 
-# Concatenting bathymetric information with the reef mosaic for geomorphic mapping
+	# Concatenting bathymetric information with the reef mosaic for geomorphic mapping
 
-reef_mosaic_geomorphic=cv2.resize(reef_mosaic_benthic, (885,472))
-reef_mosaic_geomorphic=np.concatenate((reef_mosaic_geomorphic,bathymetry_raster), axis=2)
+	reef_mosaic_geomorphic=cv2.resize(reef_mosaic_benthic, (885,472))
+	reef_mosaic_geomorphic=np.concatenate((reef_mosaic_geomorphic,bathymetry_raster), axis=2)
 
-"""###Section 3: Benthic maps  
-number_of_cluster = 4
-"""
+	"""###Section 3: Benthic maps  
+	number_of_cluster = 4
+	"""
 
-#3.1 Kmeans Result
+	#3.1 Kmeans Result
 
-kmeans_labels = kmeans_mosaic(reef_mosaic_benthic,4)
-show_cluster_output(kmeans_labels,reef_mosaic_benthic)
+	kmeans_labels = kmeans_mosaic(reef_mosaic_benthic,4)
+	show_cluster_output(kmeans_labels,reef_mosaic_benthic)
 
-#3.1 Gaussian mixture model clustering result
+	#3.1 Gaussian mixture model clustering result
 
-gmm_labels_benthic = gmm_mosaic(reef_mosaic_benthic,4,'full')
-show_cluster_output(gmm_labels_benthic,reef_mosaic_benthic)
+	gmm_labels_benthic = gmm_mosaic(reef_mosaic_benthic,4,'full')
+	show_cluster_output(gmm_labels_benthic,reef_mosaic_benthic)
 
-# 3.3 Hierarchichal agglomerative clustering result
+	# 3.3 Hierarchichal agglomerative clustering result
 
-hac_labels,mosaic_hac = hac_mosaic(reef_mosaic_benthic,4)
-show_cluster_output(hac_labels,mosaic_hac)
+	hac_labels,mosaic_hac = hac_mosaic(reef_mosaic_benthic,4)
+	show_cluster_output(hac_labels,mosaic_hac)
 
-# 3.4 DBSCAN clustering result
+	# 3.4 DBSCAN clustering result
 
-dbscan_labels = dbscan_mosaic(reef_mosaic_benthic,5,9)
-show_cluster_output(dbscan_labels,reef_mosaic_benthic)
+	dbscan_labels = dbscan_mosaic(reef_mosaic_benthic,5,9)
+	show_cluster_output(dbscan_labels,reef_mosaic_benthic)
 
-"""###Section 4: Geomorphic maps  
-number_of_cluster = 7
-"""
+	"""###Section 4: Geomorphic maps  
+	number_of_cluster = 7
+	"""
 
-#3.1 Kmeans Result
+	#3.1 Kmeans Result
 
-kmeans_labels = kmeans_mosaic(reef_mosaic_geomorphic,7)
-show_cluster_output(kmeans_labels,reef_mosaic_geomorphic)
+	kmeans_labels = kmeans_mosaic(reef_mosaic_geomorphic,7)
+	show_cluster_output(kmeans_labels,reef_mosaic_geomorphic)
 
-#3.1 Gaussian mixture model clustering result
+	#3.1 Gaussian mixture model clustering result
 
-gmm_labels_geomorphic = gmm_mosaic(reef_mosaic_geomorphic,7,'full')
-show_cluster_output(gmm_labels_geomorphic,reef_mosaic_geomorphic)
+	gmm_labels_geomorphic = gmm_mosaic(reef_mosaic_geomorphic,7,'full')
+	show_cluster_output(gmm_labels_geomorphic,reef_mosaic_geomorphic)
 
-# 3.3 Hierarchichal agglomerative clustering result
+	# 3.3 Hierarchichal agglomerative clustering result
 
-hac_labels,mosaic_hac = hac_mosaic(reef_mosaic_geomorphic,7)
-show_cluster_output(hac_labels,mosaic_hac)
+	hac_labels,mosaic_hac = hac_mosaic(reef_mosaic_geomorphic,7)
+	show_cluster_output(hac_labels,mosaic_hac)
 
-# 3.4 DBSCAN clustering result
+	# 3.4 DBSCAN clustering result
 
-dbscan_labels = dbscan_mosaic(reef_mosaic_geomorphic,17,15)
-show_cluster_output(dbscan_labels,reef_mosaic_geomorphic)
+	dbscan_labels = dbscan_mosaic(reef_mosaic_geomorphic,17,15)
+	show_cluster_output(dbscan_labels,reef_mosaic_geomorphic)
 
-"""### Section 5: Visual comparision with existing maps 
-Gaussian Mixture model example
+	"""### Section 5: Visual comparision with existing maps 
+	Gaussian Mixture model example
 
-"""
+	"""
 
-# 1. Benthic Map
+	# 1. Benthic Map
 
-label_to_color = {
-    0: [202, 210, 212],  # sea - gray
-    1: [255, 255, 191],  # sand - light yellow
-    2: [180, 155, 58],  # rock - brown
-    3: [255, 255, 191],  #
+	label_to_color = {
+	    0: [202, 210, 212],  # sea - gray
+	    1: [255, 255, 191],  # sand - light yellow
+	    2: [180, 155, 58],  # rock - brown
+	    3: [255, 255, 191],  #
 
-}
-labels = {0:'ocean',1:'sand',2:'rock/rubble',3:'misc'}
+	}
+	labels = {0:'ocean',1:'sand',2:'rock/rubble',3:'misc'}
 
-height, width,_ = reef_mosaic_benthic.shape
-gmm_labels_benthic_reshaped = gmm_labels_benthic.reshape(reef_mosaic_benthic[:, :, 0].shape)
-refined_gmm_benthic_map = np.zeros((height, width, 3), dtype=np.uint8)
+	height, width,_ = reef_mosaic_benthic.shape
+	gmm_labels_benthic_reshaped = gmm_labels_benthic.reshape(reef_mosaic_benthic[:, :, 0].shape)
+	refined_gmm_benthic_map = np.zeros((height, width, 3), dtype=np.uint8)
 
-for gray, rgb in label_to_color.items():
-    refined_gmm_benthic_map[gmm_labels_benthic_reshaped == gray, :] = rgb
+	for gray, rgb in label_to_color.items():
+	    refined_gmm_benthic_map[gmm_labels_benthic_reshaped == gray, :] = rgb
 
-# Visualising
-show_image(refined_gmm_benthic_map)
+	# Visualising
+	show_image(refined_gmm_benthic_map)
 
-#2. Geomorphic Map
-label_to_color = {
-    
-    0: [146,115,157],  #  purple [146, 115, 157] - reef flat
-    1: [202,210,212],  #  ocean [202, 210, 212] - ocean
-    2: [20,186,164],  
-    3: [202,210,212],  #  green [20, 186, 164]   - reef slope 
-    4: [202,210,212],
-    5: [171,219,227],  #  light blue [171,219,227] - plateau/lagoon    
-    6: [202,210,212],  
+	#2. Geomorphic Map
+	label_to_color = {
+	    
+	    0: [146,115,157],  #  purple [146, 115, 157] - reef flat
+	    1: [202,210,212],  #  ocean [202, 210, 212] - ocean
+	    2: [20,186,164],  
+	    3: [202,210,212],  #  green [20, 186, 164]   - reef slope 
+	    4: [202,210,212],
+	    5: [171,219,227],  #  light blue [171,219,227] - plateau/lagoon    
+	    6: [202,210,212],  
 
-}
+	}
 
-height, width,_ = reef_mosaic_geomorphic.shape
-gmm_labels_geomorphic_reshaped = gmm_labels_geomorphic.reshape(reef_mosaic_geomorphic[:, :, 0].shape)
-refined_gmm_geomorphic_map = np.zeros((height, width, 3), dtype=np.uint8)
+	height, width,_ = reef_mosaic_geomorphic.shape
+	gmm_labels_geomorphic_reshaped = gmm_labels_geomorphic.reshape(reef_mosaic_geomorphic[:, :, 0].shape)
+	refined_gmm_geomorphic_map = np.zeros((height, width, 3), dtype=np.uint8)
 
-for gray, rgb in label_to_color.items():
-    refined_gmm_geomorphic_map[gmm_labels_geomorphic_reshaped == gray, :] = rgb
+	for gray, rgb in label_to_color.items():
+	    refined_gmm_geomorphic_map[gmm_labels_geomorphic_reshaped == gray, :] = rgb
 
-# Visualising
-show_image(refined_gmm_geomorphic_map)
+	# Visualising
+	show_image(refined_gmm_geomorphic_map)
 
-import imageio as iio
-allen_coral_atlas_benthic_map = iio.imread('/content/drive/MyDrive/unsw_remote_sensing/benthic_map_ACA_legend.JPG')
-allen_coral_atlas_geomorphic_map = iio.imread('/content/drive/MyDrive/unsw_remote_sensing/geomorphic_map_ACA_legend.JPG')
+	import imageio as iio
+	allen_coral_atlas_benthic_map = iio.imread('/content/drive/MyDrive/unsw_remote_sensing/benthic_map_ACA_legend.JPG')
+	allen_coral_atlas_geomorphic_map = iio.imread('/content/drive/MyDrive/unsw_remote_sensing/geomorphic_map_ACA_legend.JPG')
 
-f, axarr = plt.subplots(nrows=2, ncols=2,figsize=(12,12))
+	f, axarr = plt.subplots(nrows=2, ncols=2,figsize=(12,12))
 
-axarr[0,0].imshow(allen_coral_atlas_benthic_map)
-axarr[0,1].imshow(refined_gmm_benthic_map)
-axarr[1,0].imshow(allen_coral_atlas_geomorphic_map)
-axarr[1,1].imshow(refined_gmm_geomorphic_map)
+	axarr[0,0].imshow(allen_coral_atlas_benthic_map)
+	axarr[0,1].imshow(refined_gmm_benthic_map)
+	axarr[1,0].imshow(allen_coral_atlas_geomorphic_map)
+	axarr[1,1].imshow(refined_gmm_geomorphic_map)
+
+if __name__ == '__main__':
+	main()
