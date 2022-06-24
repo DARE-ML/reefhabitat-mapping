@@ -18,3 +18,6 @@ We have implemented 4 unsupervised clustering algorithms for generating benthic 
 The repository contains two versions of the framework code:
 - reef_insight_notebook.ipynb - Jupyter notebook with results
 - reef_insight.py - python script implementation
+
+## Citation
+Allen Coral Atlas (2020). Imagery, maps and monitoring of the world's tropical coral reefs. Zenodo. DOI: doi.org/10.5281/zenodo.3833242 (Data)
