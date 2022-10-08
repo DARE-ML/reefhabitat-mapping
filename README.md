@@ -20,4 +20,4 @@ The repository contains two versions of the framework code:
 - reef_insight.py - python script implementation
 
 ## Citation
-Allen Coral Atlas (2020). Imagery, maps and monitoring of the world's tropical coral reefs. Zenodo. DOI: doi.org/10.5281/zenodo.3833242 (Data)
+S. Barve, J. Webster, and R. Chandra, "Reef-insight: A framework for reef habitat mapping  with clustering methods via remote sensing", under review. 
